@@ -1,6 +1,6 @@
 {
   "name": "wp-styler-ai",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Image to WordPress theme.json color palette converter using AI",
   "author": "Hossein Karami <hi@hosseinkarami.com> (https://hosseinkarami.com)",
   "repository": {
@@ -8,8 +8,8 @@
     "url": "git+https://github.com/HosseinKarami/WPStylerAI.git"
   },
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "tsx ./test/index.ts"
