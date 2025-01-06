@@ -1,7 +1,7 @@
 {
   "name": "wp-styler-ai",
-  "version": "0.0.2",
-  "description": "Image to WordPress theme.json color palette converter using AI",
+  "version": "0.0.6",
+  "description": "Generate WordPress theme.json color palettes from images using AI-powered OCR through the OpenRouter API and Gemini Flash 2.0.",
   "author": "Hossein Karami <hi@hosseinkarami.com> (https://hosseinkarami.com)",
   "repository": {
     "type": "git",
@@ -20,8 +20,8 @@
     "typescript": "^5.7.2"
   },
   "keywords": [
-    "together ai",
-    "vLLMs",
+    "openrouter",
+    "Google Gemini",
     "open source",
     "AI models",
     "WordPress",
@@ -30,6 +30,6 @@
     "Llama"
   ],
   "dependencies": {
-    "together-ai": "^0.10.0"
+    "openai": "^4.77.3"
   }
 }

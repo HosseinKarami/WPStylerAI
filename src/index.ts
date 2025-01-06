@@ -1,72 +1,72 @@
-import Together from "together-ai";
+import OpenAI from 'openai';
 import fs from "fs";
 
 export async function ocr({
   filePath,
-  apiKey = process.env.TOGETHER_API_KEY,
-  model = "Llama-3.2-90B-Vision",
+  apiKey = process.env.OPENROUTER_API_KEY,
+  model = "google/gemini-2.0-flash-exp:free",
 }: {
   filePath: string;
   apiKey?: string;
-  model?: "Llama-3.2-90B-Vision" | "Llama-3.2-11B-Vision" | "free";
+  model?: "google/gemini-2.0-flash-exp:free";
 }) {
-  const visionLLM =
-    model === "free"
-      ? "meta-llama/Llama-Vision-Free"
-      : `meta-llama/${model}-Instruct-Turbo`;
-
-  const together = new Together({
-    apiKey,
+  const openai = new OpenAI({
+    apiKey: apiKey,
+    baseURL: "https://openrouter.ai/api/v1",
   });
 
-  let finalMarkdown = await getThemeJson({ together, visionLLM, filePath });
+  let finalMarkdown = await getThemeJson({ openai, model, filePath });
 
   return finalMarkdown;
 }
 
 async function getThemeJson({
-  together,
-  visionLLM,
+  openai,
+  model,
   filePath,
 }: {
-  together: Together;
-  visionLLM: string;
+  openai: OpenAI;
+  model: string;
   filePath: string;
 }) {
-  const systemPrompt = `Be STRICTLY accurate to not miss any palette color. You have a history of missing some colors, make sure you don't miss that:
-Extract the color palette from the attached image and represent it as a JSON object, following the format of the settings.color.palette array in a WordPress theme.json file. Each color in the JSON should have "slug", "color" (in hexadecimal format), and "name" keys. Follow best naming convention practices. Do self critic, and make sure you have all the HEX codes listed in the picture in your pallete, and colors match. If not, fix it. Do not return any text other than the JSON object.
-Also if the colors have a title in their section, add it as a prefix before the color name. Don't shift color names for any reason. do not replicate colors.
-Reference theme.json format (example - do not directly use these colors):
-json
-[
-  {
-    "slug": "white",
-    "color": "#FFFFFF",
-    "name": "White"
-  },
-  {
-    "slug": "black",
-    "color": "#000000",
-    "name": "Black"
-  },
-  {
-    "slug": "primary",
-    "color": "#2D2DC7",
-    "name": "Primary"
-  }
-]
+  const systemPrompt = `
+  Be strictly accurate and ensure every color in the attached image is included in the extracted palette. Follow these rules:
+  
+  1. Extract the color palette from the image and return it as a JSON object matching the format of the "settings.color.palette" array in a WordPress theme.json file.
+  2. Each color must have these keys: "slug", "color" (hexadecimal), and "name".
+  3. Use best practices for naming conventions. If a section title is present, prefix it to the color name.
+  4. Ensure no colors are missed, duplicated, or misrepresented. Critically review the output to include all unique HEX codes from the image.
+  5. Return only the JSON object and no additional text.
+  
+  **Example JSON format (do not directly copy these colors):**
+  [
+    {
+      "slug": "white",
+      "color": "#FFFFFF",
+      "name": "White"
+    },
+    {
+      "slug": "black",
+      "color": "#000000",
+      "name": "Black"
+    },
+    {
+      "slug": "primary",
+      "color": "#2D2DC7",
+      "name": "Primary"
+    }
+  ]
   `;
 
   const finalImageUrl = isRemoteFile(filePath)
     ? filePath
     : `data:image/jpeg;base64,${encodeImage(filePath)}`;
 
-  const output = await together.chat.completions.create({
-    model: visionLLM,
+  const response = await openai.chat.completions.create({
+    model: model,
     messages: [
       {
         role: "user",
-        // @ts-expect-error
         content: [
           { type: "text", text: systemPrompt },
           {
@@ -80,7 +80,7 @@ json
     ],
   });
 
-  return output.choices[0].message.content;
+  return response.choices[0].message.content;
 }
 
 function encodeImage(imagePath: string) {
