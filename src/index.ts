@@ -15,9 +15,9 @@ export async function ocr({
     baseURL: "https://openrouter.ai/api/v1",
   });
 
-  let finalMarkdown = await getThemeJson({ openai, model, filePath });
+  let finalResult = await getThemeJson({ openai, model, filePath });
 
-  return finalMarkdown;
+  return finalResult;
 }
 
 async function getThemeJson({

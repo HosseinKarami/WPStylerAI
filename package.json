@@ -1,6 +1,6 @@
 {
   "name": "wp-styler-ai",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "Generate WordPress theme.json color palettes from images using AI-powered OCR through the OpenRouter API and Gemini Flash 2.0.",
   "author": "Hossein Karami <hi@hosseinkarami.com> (https://hosseinkarami.com)",
   "repository": {
