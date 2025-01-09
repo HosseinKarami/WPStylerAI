@@ -6,7 +6,7 @@ async function main() {
     apiKey: process.env.OPENROUTER_API_KEY,
   });
 
-  console.log(json);
+  console.log(JSON.stringify(json, null, 2));
 }
 
 main();

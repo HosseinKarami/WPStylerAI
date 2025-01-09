@@ -39,23 +39,7 @@ async function getThemeJson({
   5. Return only the JSON object and no additional text.
   
   **Example JSON format (do not directly copy these colors):**
-  [
-    {
-      "slug": "white",
-      "color": "#FFFFFF",
-      "name": "White"
-    },
-    {
-      "slug": "black",
-      "color": "#000000",
-      "name": "Black"
-    },
-    {
-      "slug": "primary",
-      "color": "#2D2DC7",
-      "name": "Primary"
-    }
-  ]
+ {"$schema":"https://schemas.wp.org/trunk/theme.json","version":3,"settings":{"color":{"palette":[{"slug":"white","color":"#FFFFFF","name":"White"},{"slug":"black","color":"#000000","name":"Black"},{"slug":"primary","color":"#2D2DC7","name":"Primary"}]}}}
   `;
 
   const finalImageUrl = isRemoteFile(filePath)
@@ -80,7 +64,11 @@ async function getThemeJson({
     ],
   });
 
-  return response.choices[0].message.content;
+   // Cleanup response to remove backticks or markdown syntax
+   const rawContent = response.choices[0].message.content;
+   const cleanContent = rawContent.replace(/```(?:json)?\n?|\\n/g, "").trim();
+ 
+   return JSON.parse(cleanContent);
 }
 
 function encodeImage(imagePath: string) {
